@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            html,
+            body,
+            h2,
+            ul,
+            li {
+                padding: 0;
+                margin: 0;
+            }
+            ul,
+            li {
+                list-style: none;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+
+            .main-head {
+                width: 80vw;
+                min-width: 720px;
+                margin: 0 auto;
+                padding: 50px 0 20px 0;
+            }
+
+            .main-chart {
+                display: flex;
+                flex-flow: column;
+                height: 80vh;
+                width: 80vw;
+                min-width: 720px;
+                margin: 0 auto;
+                border: 1px solid skyblue;
+            }
+            .main-chart .message-wrapper {
+                background-color: #8fcda0;
+                flex: 1;
+                overflow-y: auto;
+                border: 1px solid #f00;
+            }
+            .message-item {
+                margin-bottom: 15px;
+                padding: 0 10px;
+            }
+            .message-content {
+                display: inline-block;
+                background-color: #fff;
+                border: 1px solid #0f0;
+                border-radius: 4px;
+                padding: 10px;
+                word-break: break-all;
+                max-width: 80%;
+            }
+
+            .main-chart .toolbar-wrapper {
+                display: flex;
+                flex-flow: row nowrap;
+                box-sizing: border-box;
+                padding: 0 15px;
+            }
+            .toolbar-wrapper .toolbar-item {
+                padding: 10px 0;
+                cursor: pointer;
+            }
+            .toolbar-item + .toolbar-item {
+                margin-left: 10px;
+            }
+            .toolbar-item:hover {
+                background-color: rgba(0, 0, 0, 0.3);
+            }
+
+            .textinput-wrapper {
+                height: auto;
+                width: 60%;
+                display: flex;
+                flex-flow: row nowrap;
+                align-items: flex-end;
+                align-content: flex-end;
+                margin-bottom: 10px;
+            }
+            .textinput-inner {
+                flex: 1;
+                min-height: 50px; /*  //设置最小高度*/
+                height: auto; /* 高度根据内容自适应*/
+                max-height: 8em;
+                padding: 10px;
+                box-sizing: content-box;
+                width: 198px;
+                border: 1px solid rgba(0, 0, 0, 0.2);
+                background-color: white;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+            .textinput-send {
+                margin-left: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <h2 class="main-head">聊天对话框</h2>
+        <div class="main-chart">
+            <div id="message-wrapper" class="message-wrapper">
+                <div class="message-item">
+                    <div class="message-content">1</div>
+                </div>
+                <div class="message-item">
+                    <div class="message-content">2</div>
+                </div>
+                <div class="message-item">
+                    <div class="message-content">3</div>
+                </div>
+                <div class="message-item">
+                    <div class="message-content">4</div>
+                </div>
+                <div class="message-item">
+                    <div class="message-content">5</div>
+                </div>
+            </div>
+            <ul class="toolbar-wrapper">
+                <li class="toolbar-item">emoji</li>
+                <li class="toolbar-item">file</li>
+                <li class="toolbar-item">screen</li>
+            </ul>
+            <div class="textinput-wrapper">
+                <div
+                    id="textinput-inner"
+                    class="textinput-inner"
+                    contenteditable="true"
+                ></div>
+                <div class="textinput-send">
+                    <button id="textinput-send" type="button">
+                        发送（回车键）
+                    </button>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            const textinputSend = document.querySelector("#textinput-send");
+            const textinputInner = document.querySelector("#textinput-inner");
+            const messageWrapper = document.querySelector("#message-wrapper");
+
+            // 滚动条滚动逻辑
+            function handleScroll({ type, messageWrapper } = { type: "send" }) {
+                const heightMessage = Math.ceil(
+                    window
+                        .getComputedStyle(messageWrapper)
+                        .height.replace("px", "") - 0
+                );
+
+                const msgScrollHeight =
+                    Math.ceil(messageWrapper.scrollHeight) + 2;
+
+                // 滚动条距离顶部的距离
+                const scrollTop = msgScrollHeight - heightMessage;
+
+                messageWrapper.scrollTop = scrollTop;
+            }
+
+            textinputInner.addEventListener("input", (event) => {
+                // console.log("event change: ", event);
+                // handleScroll({ type: "input", messageWrapper });
+            });
+
+            function handleSend() {
+                const value = textinputInner.innerHTML;
+                if (value) {
+                    const messageItem = document.createElement("div");
+                    messageItem.setAttribute("class", "message-item");
+                    messageItem.innerHTML = `<div class="message-content">${value}</div>`;
+                    messageWrapper.appendChild(messageItem);
+                }
+
+                textinputInner.innerHTML = "";
+
+                handleScroll({ type: "send", messageWrapper });
+            }
+
+            textinputSend.addEventListener("click", handleSend);
+
+            textinputInner.addEventListener("keydown", function (event) {
+                // ctrl 键是 event.ctrlKey
+                // shift 键是 event.shiftKey
+                if (
+                    (event.altKey || event.ctrlKey || event.shiftKey) &&
+                    event.keyCode == 13
+                ) {
+                    console.log("您同时按了Alt键和Enter键");
+                    return;
+                }
+
+                const keyCode = event.keyCode || event.which;
+                if (keyCode === 13) {
+                    handleSend();
+                    event.preventDefault();
+                }
+            });
+        </script>
+    </body>
+</html>
